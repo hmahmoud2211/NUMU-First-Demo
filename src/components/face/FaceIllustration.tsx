@@ -50,7 +50,8 @@ function Mouth({ shape }: { shape: MouthShape }) {
     case 'frown':
       return <Path d="M80 160 Q100 140 120 160" fill="none" {...stroke} />;
     case 'open':
-      return <Path d="M76 148 Q100 140 124 148 Q124 166 100 166 Q76 166 76 148 Z" fill={colors.faceMouthInside} {...stroke} />;
+      // Stretched, tense opening (fear) — distinct from the round "O" of surprise.
+      return <Path d="M74 160 Q100 136 126 160 Q100 172 74 160 Z" fill={colors.faceMouthInside} {...stroke} />;
     case 'round':
       return <Ellipse cx={100} cy={154} rx={10} ry={13} fill={colors.faceMouthInside} {...stroke} />;
     case 'neutral':
@@ -67,22 +68,23 @@ function Mouth({ shape }: { shape: MouthShape }) {
 
 function Hair({ style, color }: { style: number; color: string }) {
   switch (style % 4) {
+    // Hairlines stay above y≈56 so raised eyebrows are never hidden.
     case 0:
-      return <Path d="M28 104 C24 30 176 30 172 104 C160 50 120 44 100 50 C80 44 44 50 28 104 Z" fill={color} />;
+      return <Path d="M26 108 C18 -6 182 -6 174 108 C164 64 128 50 100 56 C72 50 36 64 26 108 Z" fill={color} />;
     case 1:
-      return <Path d="M30 96 C30 30 170 30 170 96 C150 52 110 46 100 56 C90 46 50 52 30 96 Z" fill={color} />;
+      return <Path d="M24 112 C14 -8 186 -8 176 112 C168 60 130 48 104 54 C80 44 40 56 24 112 Z" fill={color} />;
     case 2:
       return (
         <G>
-          <Circle cx={100} cy={30} r={20} fill={color} />
-          <Path d="M30 98 C30 34 170 34 170 98 C150 44 50 44 30 98 Z" fill={color} />
+          <Circle cx={100} cy={20} r={22} fill={color} />
+          <Path d="M28 104 C22 0 178 0 172 104 C150 36 50 36 28 104 Z" fill={color} />
         </G>
       );
     default:
       return (
         <G>
-          {[40, 62, 86, 112, 136, 158].map((cx, i) => (
-            <Circle key={cx} cx={cx} cy={i === 0 || i === 5 ? 62 : 40} r={20} fill={color} />
+          {[38, 60, 86, 114, 140, 162].map((cx, i) => (
+            <Circle key={cx} cx={cx} cy={i === 0 || i === 5 ? 60 : 36} r={22} fill={color} />
           ))}
         </G>
       );
@@ -103,7 +105,7 @@ export function FaceIllustration({ parts, variant = 0, size = 200, accessibility
   const longHair = variant % 4 === 1;
   return (
     <Svg width={size} height={size} viewBox="0 0 200 200" accessibilityLabel={accessibilityLabel}>
-      {longHair ? <Rect x={30} y={70} width={140} height={120} rx={40} fill={hair} /> : null}
+      {longHair ? <Rect x={16} y={70} width={168} height={100} rx={34} fill={hair} /> : null}
       <Circle cx={28} cy={112} r={12} fill={skin} />
       <Circle cx={172} cy={112} r={12} fill={skin} />
       <Circle cx={100} cy={110} r={74} fill={skin} />

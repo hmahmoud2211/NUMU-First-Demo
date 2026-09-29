@@ -59,13 +59,17 @@ export function getCanonicalFace(emotion: Emotion): FaceParts {
   return { eyes: accepted.eyes[0], brows: accepted.brows[0], mouth: accepted.mouth[0] };
 }
 
-/** Produces small, still-valid variations of an emotion's face for illustrated examples. */
+/**
+ * Produces small, still-valid variations of an emotion's face for illustrated
+ * examples. The mouth (the clearest cue) always stays canonical so teaching
+ * examples of similar emotions (e.g. fear vs surprise) remain distinguishable.
+ */
 export function getFaceVariant(emotion: Emotion, variant: number): FaceParts {
   const { accepted } = EMOTION_FACE_CONFIGURATIONS[emotion];
   return {
     eyes: accepted.eyes[Math.floor(variant / 2) % accepted.eyes.length],
     brows: accepted.brows[variant % accepted.brows.length],
-    mouth: accepted.mouth[Math.floor(variant / 3) % accepted.mouth.length],
+    mouth: accepted.mouth[0],
   };
 }
 

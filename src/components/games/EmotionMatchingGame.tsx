@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { LearningAvatar } from '@/components/avatar/LearningAvatar';
@@ -30,7 +30,7 @@ export function EmotionMatchingGame({ question, source, onComplete }: GameCompon
     ageGroup.id,
   ));
   const [mood, setMood] = useState<'happy' | 'encouraging' | 'celebrating'>('happy');
-  const startedAt = useRef(Date.now());
+  const [startedAt] = useState(() => Date.now());
 
   const imageSize = Math.min((width - 64) / 2, 140);
   const allMatched = matched.length === question.pairs.length;
@@ -71,7 +71,7 @@ export function EmotionMatchingGame({ question, source, onComplete }: GameCompon
         attempts,
         usedCoaching: false,
         points: scoreAttempt({ solved: true, attempts, usedCoaching: false }),
-        responseTimeMs: Date.now() - startedAt.current,
+        responseTimeMs: Date.now() - startedAt,
         timestamp: now,
         source,
       };

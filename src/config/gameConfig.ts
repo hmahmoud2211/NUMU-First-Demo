@@ -78,6 +78,8 @@ export const MASTERY = {
   developing: 0.6,
   /** How many weak emotions to focus on at once. */
   maxFocusEmotions: 2,
+  /** Answers needed before an emotion is ranked as strongest/weakest. */
+  minAttempts: 2,
 } as const;
 
 export const STARS = {

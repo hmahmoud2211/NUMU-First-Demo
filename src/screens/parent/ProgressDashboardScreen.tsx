@@ -59,9 +59,11 @@ export default function ProgressDashboardScreen() {
   const area = getLearningArea(child.learningArea);
   const weakest = insights.emotions.find((e) => e.emotion === insights.weakEmotions[0]) ?? null;
   const topConfusion = insights.confusions[0];
-  const first = history[0];
-  const last = history[history.length - 1];
-  const change = first && last && history.length > 1 ? toPercent(last.accuracy) - toPercent(first.accuracy) : null;
+  // Trend compares full game sessions only; focused practice is harder by design.
+  const games = history.filter((session) => session.kind === 'game');
+  const first = games[0];
+  const last = games[games.length - 1];
+  const change = first && last && games.length > 1 ? toPercent(last.accuracy) - toPercent(first.accuracy) : null;
 
   return (
     <ScreenContainer>
@@ -173,10 +175,8 @@ export default function ProgressDashboardScreen() {
           <Card style={styles.section}>
             <View style={styles.historyHeader}>
               <Text style={[typography.h3, styles.flex]}>Session history</Text>
-              {change !== null ? (
-                <Text style={[typography.label, { color: change >= 0 ? colors.success : colors.textSecondary }]}>
-                  {change >= 0 ? `▲ +${change}%` : `${change}%`} since first session
-                </Text>
+              {change !== null && change > 0 ? (
+                <Text style={[typography.label, { color: colors.success }]}>▲ +{change}% since first session</Text>
               ) : null}
             </View>
             {history.map((session, index) => (

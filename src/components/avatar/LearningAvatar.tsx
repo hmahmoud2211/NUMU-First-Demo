@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, Ellipse, G, Path } from 'react-native-svg';
 
@@ -78,7 +78,7 @@ export function LearningAvatar({
   const { ageGroup } = useChild();
   const { say } = useSpeech();
   const reduceMotion = useReduceMotion();
-  const bob = useRef(new Animated.Value(0)).current;
+  const [bob] = useState(() => new Animated.Value(0));
   const shouldAutoSpeak = speechEnabled && (autoSpeak ?? ageGroup.autoSpeak);
 
   // Slow, gentle float. Skipped entirely when reduce motion is on.

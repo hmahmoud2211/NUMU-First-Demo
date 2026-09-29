@@ -43,11 +43,10 @@ export function EmotionOption({ emotion, state = 'idle', onPress, compact = fals
         pressed && interactive && styles.pressed,
       ]}
     >
-      {ageGroup.showEmoji ? <Text style={styles.emoji}>{getEmotionEmoji(emotion)}</Text> : null}
+      {ageGroup.showEmoji ? <Text style={compact ? styles.compactEmoji : styles.emoji}>{getEmotionEmoji(emotion)}</Text> : null}
       <Text
         style={[typography.childOption, compact && styles.compactText, state === 'tried' && styles.triedText]}
-        numberOfLines={1}
-        adjustsFontSizeToFit
+        numberOfLines={compact ? 2 : 1}
       >
         {label}
       </Text>
@@ -74,11 +73,14 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   compactText: {
-    fontSize: 17,
+    fontSize: 16,
     flexShrink: 1,
   },
   emoji: {
     fontSize: 28,
+  },
+  compactEmoji: {
+    fontSize: 22,
   },
   trailing: {
     marginLeft: 'auto',

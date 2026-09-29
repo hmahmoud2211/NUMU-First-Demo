@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/common/AppButton';
@@ -17,7 +17,7 @@ export default function SplashScreen() {
   const { parent, onboardingSeen, isReady: authReady } = useAuth();
   const { child, isReady: childReady } = useChild();
   const reduceMotion = useReduceMotion();
-  const logo = useRef(new Animated.Value(0)).current;
+  const [logo] = useState(() => new Animated.Value(0));
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {

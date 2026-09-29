@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   },
   titleRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
@@ -53,7 +54,9 @@ const styles = StyleSheet.create({
     fontSize: 44,
   },
   label: {
-    letterSpacing: 1,
+    letterSpacing: 0.5,
+    flexShrink: 1,
+    textAlign: 'center',
   },
   description: {
     textAlign: 'center',

@@ -49,7 +49,9 @@ export function LearningProvider({ children }: { children: ReactNode }) {
   const [progress, setProgress] = useState<ChildProgress>(EMPTY_PROGRESS);
   const [activeSession, setActiveSession] = useState<ActiveSession | null>(null);
   const [lastSummary, setLastSummary] = useState<SessionSummary | null>(null);
-  const [isReady, setIsReady] = useState(false);
+  // The child id whose progress has finished loading; readiness is derived from it.
+  const [loadedChildId, setLoadedChildId] = useState<string | null | undefined>(undefined);
+  const isReady = loadedChildId === childId;
   // Refs let actions read the latest state synchronously between renders.
   const sessionRef = useRef<ActiveSession | null>(null);
   const progressRef = useRef<ChildProgress>(EMPTY_PROGRESS);
@@ -68,11 +70,18 @@ export function LearningProvider({ children }: { children: ReactNode }) {
     [childId],
   );
 
+  // Tracks which child the in-memory session belongs to.
+  const sessionChildRef = useRef<string | null>(null);
+
   useEffect(() => {
     let active = true;
-    setIsReady(false);
-    updateSession(null);
-    setLastSummary(null);
+    // Only drop the session when switching away from a previously loaded child;
+    // a session started while the first profile loads must survive.
+    if (sessionChildRef.current !== null && sessionChildRef.current !== childId) {
+      updateSession(null);
+      setLastSummary(null);
+    }
+    sessionChildRef.current = childId;
     (async () => {
       const loaded = childId
         ? await loadJSON<ChildProgress>(storageKeys.progress(childId), initialProgressFor(childId))
@@ -80,7 +89,7 @@ export function LearningProvider({ children }: { children: ReactNode }) {
       if (!active) return;
       progressRef.current = { ...EMPTY_PROGRESS, ...loaded };
       setProgress(progressRef.current);
-      setIsReady(true);
+      setLoadedChildId(childId);
     })();
     return () => {
       active = false;

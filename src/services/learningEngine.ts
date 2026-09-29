@@ -81,11 +81,24 @@ function toInsights(stats: EmotionStats): EmotionInsight[] {
   });
 }
 
-/** Emotions below the "strong" threshold, sorted by error rate (weakest first). */
+/**
+ * Accuracy pulled slightly towards 50% so a single answer does not outweigh
+ * many (0/1 should not look weaker than 4/14). Used for ranking only.
+ */
+function rankingScore(insight: EmotionInsight): number {
+  return (insight.correct + 1) / (insight.attempted + 2);
+}
+
+/** Prefers emotions with enough answers to judge; falls back to all when data is thin. */
+function withEnoughData(insights: EmotionInsight[]): EmotionInsight[] {
+  const reliable = insights.filter((insight) => insight.attempted >= MASTERY.minAttempts);
+  return reliable.length > 0 ? reliable : insights;
+}
+
+/** Emotions below the "strong" threshold, weakest first. */
 export function getWeakEmotionsFromStats(stats: EmotionStats, max: number = MASTERY.maxFocusEmotions): Emotion[] {
-  return toInsights(stats)
-    .filter((insight) => insight.accuracy < MASTERY.strong)
-    .sort((a, b) => a.accuracy - b.accuracy || b.attempted - a.attempted)
+  return withEnoughData(toInsights(stats).filter((insight) => insight.accuracy < MASTERY.strong))
+    .sort((a, b) => rankingScore(a) - rankingScore(b))
     .slice(0, max)
     .map((insight) => insight.emotion);
 }
@@ -160,7 +173,7 @@ export function buildProgressInsights(history: SessionSummary[]): ProgressInsigh
   const attempted = emotions.reduce((sum, e) => sum + e.attempted, 0);
   const correct = emotions.reduce((sum, e) => sum + e.correct, 0);
   const confusions = mergeConfusions(history);
-  const strongest = [...emotions].sort((a, b) => b.accuracy - a.accuracy || b.attempted - a.attempted)[0] ?? null;
+  const strongest = withEnoughData(emotions).sort((a, b) => rankingScore(b) - rankingScore(a))[0] ?? null;
   return {
     sessionsCompleted: history.length,
     overallAccuracy: attempted === 0 ? null : correct / attempted,

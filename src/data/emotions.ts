@@ -52,7 +52,3 @@ export function getImagesForEmotion(emotion: Emotion): EmotionImage[] {
   if (photos.length > 0) return photos;
   return illustratedImages.filter((image) => image.emotion === emotion);
 }
-
-export function hasPhotoImages(): boolean {
-  return photoImages.length > 0;
-}

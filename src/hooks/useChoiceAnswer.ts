@@ -23,7 +23,7 @@ export function useChoiceAnswer(question: Target, source: ResultSource) {
   const [wrong, setWrong] = useState<Emotion[]>([]);
   const [status, setStatus] = useState<AnswerStatus>('answering');
   const [usedCoaching, setUsedCoaching] = useState(false);
-  const startedAt = useRef(Date.now());
+  const [startedAt] = useState(() => Date.now());
   const firstResponseMs = useRef<number | undefined>(undefined);
   const firstSelection = useRef<Emotion | undefined>(undefined);
 
@@ -32,7 +32,7 @@ export function useChoiceAnswer(question: Target, source: ResultSource) {
       if (status === 'solved' || status === 'revealed') return;
       if (firstSelection.current === undefined) {
         firstSelection.current = selected;
-        firstResponseMs.current = Date.now() - startedAt.current;
+        firstResponseMs.current = Date.now() - startedAt;
       }
       if (selected === question.targetEmotion) {
         setStatus('solved');
@@ -42,7 +42,7 @@ export function useChoiceAnswer(question: Target, source: ResultSource) {
       setWrong(next);
       setStatus(next.length >= SCORING.maxAttempts ? 'revealed' : 'retry');
     },
-    [question.targetEmotion, status, wrong],
+    [question.targetEmotion, startedAt, status, wrong],
   );
 
   const markCoaching = useCallback(() => setUsedCoaching(true), []);

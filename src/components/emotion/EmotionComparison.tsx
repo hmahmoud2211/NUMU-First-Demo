@@ -20,7 +20,7 @@ function Column({ emotion, size, showCues }: { emotion: Emotion; size: number; s
   const cues = EMOTION_LESSONS[emotion].faceCues;
   return (
     <View style={[styles.column, { borderColor: emotionColors[emotion].main }]}>
-      <EmotionCard emotion={emotion} />
+      <EmotionCard emotion={emotion} style={styles.label} />
       {image ? <EmotionImage image={image} size={size} revealEmotion /> : null}
       {showCues
         ? FACE_PART_CATEGORIES.map(({ id, label }) => (
@@ -63,6 +63,10 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     borderWidth: 2,
     padding: spacing.sm,
+  },
+  label: {
+    alignSelf: 'stretch',
+    paddingHorizontal: spacing.xs,
   },
   vs: {
     justifyContent: 'center',

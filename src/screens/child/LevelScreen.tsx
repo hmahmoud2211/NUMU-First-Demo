@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { LearningAvatar } from '@/components/avatar/LearningAvatar';
@@ -17,6 +17,7 @@ import { routes } from '@/navigation/routes';
 import { buildLevelQuestions } from '@/services/questionGenerator';
 import { colors, spacing, typography } from '@/theme';
 import type { LearningQuestion, LevelId, QuestionResult } from '@/types/learning';
+import { parseEmotionList } from '@/utils/emotionHelpers';
 import { calculateAccuracy, maxScoreFor, starsForAccuracy, totalScore } from '@/utils/scoring';
 
 function LevelComplete({ level, results }: { level: LevelConfig; results: QuestionResult[] }) {
@@ -62,7 +63,6 @@ export default function LevelScreen() {
   const level = getLevel(Number(params.levelId));
   const { ageGroup } = useChild();
   const { activeSession, ensureGameSession, recordResults, completeLevel, progress } = useLearning();
-  const [questions, setQuestions] = useState<LearningQuestion[] | null>(null);
   const [finished, setFinished] = useState<QuestionResult[] | null>(null);
   const locked = !level || level.id > progress.unlockedLevel;
 
@@ -70,12 +70,17 @@ export default function LevelScreen() {
     if (!activeSession || activeSession.kind !== 'game') ensureGameSession();
   }, [activeSession, ensureGameSession]);
 
-  // Generate once per visit so answers or coaching never reshuffle the level.
-  useEffect(() => {
-    console.log('DEBUG level', !!level, locked, !!questions, activeSession?.id, progress.unlockedLevel);
-    if (!level || locked || questions || !activeSession) return;
-    setQuestions(buildLevelQuestions(level, ageGroup, `${activeSession.id}-L${level.id}`, activeSession.focusEmotions));
-  }, [activeSession, ageGroup, level, locked, questions]);
+  // Keyed on the session id and focus (not the session object) so recording
+  // answers or opening coaching never reshuffles the level.
+  const sessionId = activeSession?.id;
+  const focusKey = activeSession?.focusEmotions.join(',') ?? '';
+  const questions = useMemo<LearningQuestion[] | null>(
+    () =>
+      level && !locked && sessionId
+        ? buildLevelQuestions(level, ageGroup, `${sessionId}-L${level.id}`, parseEmotionList(focusKey))
+        : null,
+    [ageGroup, focusKey, level, locked, sessionId],
+  );
 
   const background = colors[ageGroup.childBackground];
 

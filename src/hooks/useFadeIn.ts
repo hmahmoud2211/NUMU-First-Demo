@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Easing } from 'react-native';
 
 import { useReduceMotion } from './useReduceMotion';
@@ -6,7 +6,7 @@ import { useReduceMotion } from './useReduceMotion';
 /** Gentle fade + rise used for calm entrances. Re-runs when `key` changes. */
 export function useFadeIn(key: unknown = 0, duration = 350) {
   const reduceMotion = useReduceMotion();
-  const progress = useRef(new Animated.Value(0)).current;
+  const [progress] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     if (reduceMotion) {

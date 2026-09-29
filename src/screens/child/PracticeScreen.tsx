@@ -39,11 +39,11 @@ export default function PracticeScreen() {
   const [results, setResults] = useState<QuestionResult[] | null>(null);
   const focusKey = focus.join(',');
 
-  const questions = useMemo(
-    () => (isPair ? generatePairPractice([focus[0], focus[1]], ageGroup, seed) : generatePracticeQuestions(focus, ageGroup, seed)),
-    // focusKey captures the focus list contents (the array itself is rebuilt every render).
-    [isPair, focusKey, ageGroup, seed],
-  );
+  // Keyed on focusKey (a string) because the focus array is rebuilt every render.
+  const questions = useMemo(() => {
+    const list = parseEmotionList(focusKey);
+    return isPair ? generatePairPractice([list[0], list[1]], ageGroup, seed) : generatePracticeQuestions(list, ageGroup, seed);
+  }, [isPair, focusKey, ageGroup, seed]);
 
   const focusLabel = formatEmotionList(focus, ageGroup.id);
   const background = colors[ageGroup.childBackground];
