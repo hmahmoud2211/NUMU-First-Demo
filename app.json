@@ -19,7 +19,13 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single",
+      "name": "NUMU",
+      "shortName": "NUMU",
+      "themeColor": "#5B6CFF",
+      "backgroundColor": "#F6F7FB"
     },
     "plugins": [
       "expo-router",
