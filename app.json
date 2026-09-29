@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "numu",
+    "name": "NUMU",
     "slug": "numu",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,6 +20,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "scheme": "numu",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F4F7FB"
     }
   }
 }
