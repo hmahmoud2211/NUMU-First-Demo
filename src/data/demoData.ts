@@ -16,6 +16,12 @@ export const DEMO_CHILD: ChildProfile = {
   avatarId: 'lion',
   ageGroupId: 'early',
   learningArea: 'emotion-recognition',
+  reasoningCheck: {
+    completedAt: '2026-09-01T09:10:00.000Z',
+    correct: 7,
+    total: 10,
+    band: 'typical',
+  },
   createdAt: '2026-09-01T09:05:00.000Z',
 };
 

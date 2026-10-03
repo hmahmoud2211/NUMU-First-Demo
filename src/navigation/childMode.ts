@@ -10,6 +10,16 @@ export function exitChildMode(): void {
   router.dismissTo(routes.parentHome);
 }
 
+/**
+ * Drops the child straight into NUMU World. Parent Home becomes the root of
+ * the stack so the world's "Parent area" can always return to it.
+ */
+export function enterWorld(): void {
+  if (router.canDismiss()) router.dismissAll();
+  router.replace(routes.parentHome);
+  router.push(routes.world);
+}
+
 /** Leaves child mode and opens the parent progress dashboard. */
 export function openParentDashboard(): void {
   exitChildMode();

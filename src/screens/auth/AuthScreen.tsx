@@ -9,6 +9,7 @@ import { ScreenContainer } from '@/components/common/ScreenContainer';
 import { TextField } from '@/components/common/TextField';
 import { useAuth } from '@/context/AuthContext';
 import { useChild } from '@/context/ChildContext';
+import { enterWorld } from '@/navigation/childMode';
 import { routes } from '@/navigation/routes';
 import { colors, radius, spacing, typography } from '@/theme';
 
@@ -41,7 +42,8 @@ export default function AuthScreen() {
     await continueAsDemo();
     await selectDemoChild();
     setBusy(null);
-    router.push(routes.childProfile);
+    // The demo child is already set up, so go straight into the world.
+    enterWorld();
   };
 
   return (

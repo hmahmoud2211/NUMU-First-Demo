@@ -9,6 +9,7 @@ import { ScreenContainer } from '@/components/common/ScreenContainer';
 import { SelectableCard } from '@/components/common/SelectableCard';
 import { AGE_GROUP_ORDER, AGE_GROUPS, getAgeGroupIdForAge } from '@/config/ageGroups';
 import { useChild } from '@/context/ChildContext';
+import { enterWorld } from '@/navigation/childMode';
 import { routes } from '@/navigation/routes';
 import type { AgeGroupId } from '@/types/child';
 import { spacing, typography } from '@/theme';
@@ -21,8 +22,20 @@ export default function AgeGroupScreen() {
   const group = AGE_GROUPS[selected];
 
   const confirm = async () => {
-    await updateChild({ ageGroupId: selected });
-    router.push(routes.learningArea);
+    // A child who already has an area is being edited from Parent Home.
+    const editing = Boolean(child?.learningArea);
+    // Emotion Recognition is the default area; the parent can change it later.
+    await updateChild({ ageGroupId: selected, learningArea: child?.learningArea ?? 'emotion-recognition' });
+    if (editing) {
+      router.dismissTo(routes.parentHome);
+      return;
+    }
+    // If reasoning check is not completed yet, run it before entering the world
+    if (!child?.reasoningCheck) {
+      router.push(routes.reasoningCheck);
+      return;
+    }
+    enterWorld();
   };
 
   return (

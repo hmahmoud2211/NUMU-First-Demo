@@ -8,6 +8,7 @@ import { ScreenContainer } from '@/components/common/ScreenContainer';
 import { useAuth } from '@/context/AuthContext';
 import { useChild } from '@/context/ChildContext';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
+import { enterWorld } from '@/navigation/childMode';
 import { routes } from '@/navigation/routes';
 import { colors, spacing, typography } from '@/theme';
 
@@ -34,7 +35,7 @@ export default function SplashScreen() {
   const ready = authReady && childReady;
 
   const getStarted = () => {
-    if (parent && child?.learningArea) router.replace(routes.parentHome);
+    if (parent && child?.learningArea) enterWorld();
     else if (parent) router.replace(routes.childProfile);
     else if (onboardingSeen) router.replace(routes.auth);
     else router.replace(routes.onboarding);

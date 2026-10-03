@@ -15,10 +15,9 @@ export default function LearningAreaScreen() {
   const select = async (area: LearningArea) => {
     if (!area.available) return;
     await updateChild({ learningArea: area.id });
-    // Make Parent Home the root of the stack, then enter the learning module.
-    if (router.canDismiss()) router.dismissAll();
-    router.replace(routes.parentHome);
-    router.push(routes.learningIntro);
+    // Learning happens inside NUMU World, so just return to Parent Home.
+    if (router.canGoBack()) router.back();
+    else router.replace(routes.parentHome);
   };
 
   return (

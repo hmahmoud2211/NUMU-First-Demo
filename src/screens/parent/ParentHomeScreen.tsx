@@ -11,6 +11,7 @@ import { useChild } from '@/context/ChildContext';
 import { useLearning } from '@/context/LearningContext';
 import { getChildAvatar } from '@/data/childAvatars';
 import { getLearningArea } from '@/data/learningAreas';
+import { BAND_SETTINGS } from '@/data/reasoningCheck';
 import { routes } from '@/navigation/routes';
 import { colors, radius, spacing, typography } from '@/theme';
 import { formatEmotionList, getEmotionEmoji } from '@/utils/emotionHelpers';
@@ -59,26 +60,35 @@ export default function ParentHomeScreen() {
         <AppButton title="Edit" variant="ghost" size="md" onPress={() => router.push(routes.childProfile)} />
       </Card>
 
-      <Card style={styles.today}>
-        <Text style={[typography.label, styles.overline]}>TODAY’S LEARNING</Text>
-        <Text style={typography.h2}>
-          {area?.emoji} {area?.title ?? 'Emotion Recognition'}
+      <Card style={styles.world}>
+        <View style={styles.worldHeader}>
+          <Text style={styles.worldEmoji}>🏰</Text>
+          <View style={styles.flex}>
+            <Text style={[typography.label, styles.overline]}>LEARNING IN NUMU WORLD</Text>
+            <Text style={typography.h2}>
+              {area?.emoji} {area?.title ?? 'Emotion Recognition'}
+            </Text>
+          </View>
+        </View>
+        <Text style={typography.bodySecondary}>
+          {child.name} learns while exploring the town. If {child.name} picks the wrong feeling, NUMU stops and teaches the
+          difference right there — then lets {child.name} try again.
         </Text>
         <View style={styles.recommendation}>
-          <Text style={typography.label}>{focus.length > 0 ? 'Recommended practice' : 'Starting with'}</Text>
+          <Text style={typography.label}>{focus.length > 0 ? 'NUMU is focusing on' : 'Starting with'}</Text>
           <Text style={typography.h3}>
             {recommended.map((emotion) => getEmotionEmoji(emotion)).join(' ')} {formatEmotionList(recommended)}
           </Text>
           {focus.length > 0 ? (
-            <Text style={typography.caption}>Chosen by NUMU from {child.name}’s recent answers.</Text>
+            <Text style={typography.caption}>Chosen from {child.name}’s recent answers in the House of Feelings.</Text>
           ) : null}
         </View>
-        <AppButton title="Start Today’s Session" icon="play" onPress={() => router.push(routes.learningIntro)} />
       </Card>
+      <AppButton title={`Enter NUMU World with ${child.name}`} emoji="🌍" size="child" onPress={() => router.push(routes.world)} />
 
       <View style={styles.stats}>
         <Card style={styles.stat}>
-          <Text style={typography.caption}>Sessions</Text>
+          <Text style={typography.caption}>Learning visits</Text>
           <Text style={typography.h1}>{insights.sessionsCompleted}</Text>
         </Card>
         <Card style={styles.stat}>
@@ -87,8 +97,34 @@ export default function ParentHomeScreen() {
         </Card>
       </View>
 
+      {child.reasoningCheck ? (
+        <Card style={[styles.reasoningCard, child.reasoningCheck.band === 'support' && styles.supportCard]}>
+          <View style={styles.reasoningHeader}>
+            <Text style={styles.reasoningEmoji}>🧩</Text>
+            <View style={styles.flex}>
+              <Text style={typography.h3}>Pre-World Reasoning Check</Text>
+              <Text style={typography.bodySecondary}>
+                Pace: {BAND_SETTINGS[child.reasoningCheck.band]?.label ?? 'Standard'} · {child.reasoningCheck.correct}/{child.reasoningCheck.total} solved
+              </Text>
+            </View>
+          </View>
+          {child.reasoningCheck.band === 'support' ? (
+            <View style={styles.advisoryBox}>
+              <Text style={[typography.label, styles.advisoryTitle]}>Note for Parents</Text>
+              <Text style={typography.bodySecondary}>
+                {child.name}’s reasoning check indicates that our gentlest pace is most suitable. NUMU has simplified in-world choices. If you would like a formal evaluation of {child.name}’s developmental milestones, we advise consulting a pediatrician or child development specialist.
+              </Text>
+            </View>
+          ) : (
+            <Text style={typography.caption}>
+              NUMU adapted {child.name}’s learning environment to match their reasoning strengths.
+            </Text>
+          )}
+        </Card>
+      ) : null}
+
       <AppButton title="View Progress" icon="stats-chart" variant="secondary" onPress={() => router.push(routes.dashboard)} />
-      <AppButton title="Learning Activities" icon="grid" variant="soft" onPress={() => router.push(routes.learningArea)} />
+      <AppButton title="Learning Area" icon="grid" variant="soft" onPress={() => router.push(routes.learningArea)} />
 
       <LearningAvatar
         message="Short, calm sessions work best. Sit with your child for the first few activities."
@@ -133,15 +169,24 @@ const styles = StyleSheet.create({
   childEmoji: {
     fontSize: 36,
   },
-  today: {
+  world: {
     gap: spacing.sm,
+    backgroundColor: colors.primarySoft,
+  },
+  worldHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  worldEmoji: {
+    fontSize: 40,
   },
   overline: {
     color: colors.primary,
     letterSpacing: 1,
   },
   recommendation: {
-    backgroundColor: colors.secondarySoft,
+    backgroundColor: colors.surface,
     borderRadius: radius.md,
     padding: spacing.md,
     gap: spacing.xxs,
@@ -153,6 +198,33 @@ const styles = StyleSheet.create({
   stat: {
     flex: 1,
     gap: spacing.xxs,
+  },
+  reasoningCard: {
+    gap: spacing.sm,
+    borderColor: colors.border,
+  },
+  supportCard: {
+    borderColor: colors.warning,
+    borderWidth: 1.5,
+    backgroundColor: colors.warningSoft,
+  },
+  reasoningHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  reasoningEmoji: {
+    fontSize: 32,
+  },
+  advisoryBox: {
+    backgroundColor: colors.surface,
+    padding: spacing.sm,
+    borderRadius: radius.md,
+    gap: spacing.xxs,
+  },
+  advisoryTitle: {
+    color: colors.warning,
+    fontWeight: '700',
   },
   footer: {
     gap: spacing.xs,

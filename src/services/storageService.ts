@@ -12,6 +12,7 @@ export const storageKeys = {
   child: `${PREFIX}child`,
   onboardingSeen: `${PREFIX}onboardingSeen`,
   progress: (childId: string) => `${PREFIX}progress.${childId}`,
+  world: (childId: string) => `${PREFIX}world.${childId}`,
 } as const;
 
 export async function loadJSON<T>(key: string, fallback: T): Promise<T> {

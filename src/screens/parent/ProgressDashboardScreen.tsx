@@ -15,6 +15,7 @@ import { colors, emotionColors, radius, spacing, typography } from '@/theme';
 import type { MasteryStatus, SessionSummary } from '@/types/learning';
 import { formatEmotionList, getEmotionEmoji } from '@/utils/emotionHelpers';
 import { toPercent } from '@/utils/scoring';
+import { BAND_SETTINGS } from '@/data/reasoningCheck';
 import { EMOTION_INFO } from '@/data/emotions';
 
 const STATUS_STYLE: Record<MasteryStatus, { label: string; color: string; background: string }> = {
@@ -81,13 +82,39 @@ export default function ProgressDashboardScreen() {
         </View>
       </Card>
 
+      {child.reasoningCheck ? (
+        <Card style={[styles.reasoningCard, child.reasoningCheck.band === 'support' && styles.supportCard]}>
+          <View style={styles.reasoningHeader}>
+            <Text style={styles.reasoningEmoji}>🧩</Text>
+            <View style={styles.flex}>
+              <Text style={typography.h3}>Pre-World Reasoning Check</Text>
+              <Text style={typography.bodySecondary}>
+                Starting Pace: {BAND_SETTINGS[child.reasoningCheck.band]?.label ?? 'Standard'} ({child.reasoningCheck.correct}/{child.reasoningCheck.total} solved)
+              </Text>
+            </View>
+          </View>
+          {child.reasoningCheck.band === 'support' ? (
+            <View style={styles.advisoryBox}>
+              <Text style={[typography.label, styles.advisoryTitle]}>Parent Guidance Note</Text>
+              <Text style={typography.bodySecondary}>
+                {child.name}’s reasoning check suggests a gentle learning pace. NUMU has adapted the world’s activities to offer simpler choices. If you would like a comprehensive clinical evaluation, we recommend consulting a pediatrician or child development specialist.
+              </Text>
+            </View>
+          ) : (
+            <Text style={typography.caption}>
+              NUMU tailored the activities in the town according to {child.name}’s check-in strengths.
+            </Text>
+          )}
+        </Card>
+      ) : null}
+
       {history.length === 0 ? (
         <Card tone="muted" style={styles.empty}>
-          <Text style={typography.h3}>No sessions yet</Text>
+          <Text style={typography.h3}>No learning yet</Text>
           <Text style={typography.bodySecondary}>
-            Progress will appear here after {child.name}’s first learning session.
+            Progress will appear here after {child.name} helps the friends in the House of Feelings in NUMU World.
           </Text>
-          <AppButton title="Start a session" icon="play" onPress={() => router.push(routes.learningIntro)} />
+          <AppButton title="Enter NUMU World" emoji="🌍" onPress={() => router.push(routes.world)} />
         </Card>
       ) : (
         <>
@@ -306,5 +333,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+  },
+  reasoningCard: {
+    gap: spacing.sm,
+    borderColor: colors.border,
+  },
+  supportCard: {
+    borderColor: colors.warning,
+    borderWidth: 1.5,
+    backgroundColor: colors.warningSoft,
+  },
+  reasoningHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  reasoningEmoji: {
+    fontSize: 32,
+  },
+  advisoryBox: {
+    backgroundColor: colors.surface,
+    padding: spacing.sm,
+    borderRadius: radius.md,
+    gap: spacing.xxs,
+  },
+  advisoryTitle: {
+    color: colors.warning,
+    fontWeight: '700',
   },
 });
